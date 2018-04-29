@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8" />
+<title>rule110-card-game-ppoc</title>
+<link rel="icon" href="./favicon.ico">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.20.19/system.js"></script>
+<script src="./system.config.js"></script>
+<script src="./app.js"></script>
+<script>
+  window.addEventListener('load', function(e) {
+    System
+      .import('main')
+      .then(null, console.error.bind(console));
+  });
+</script>
+<style>
+    #container {
+        position: relative;
+    }
+    #board {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+    }
+    #deck {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+    }
+    #canvas {
+        width: 300px;
+        height: 3000px;
+    }
+    #deck {
+        width: 1000px;
+    }
+    #board, #canvas, #deck, #deck > canvas {
+        display: inline-block;
+    }
+    #board {
+        width: fit-content;
+    }
+    .card {
+        border: 1px solid red;
+        display: inline-block;
+    }
+    .card > input {
+        display: block;
+    }
+    .card > canvas {
+        width: 85px;
+        height: 250px;
+    }
+</style>
+
+</head>
+<body>
+    <div id="container">
+        <div id="board">
+            <canvas id="canvas"></canvas>
+        </div>
+        <div id="deck">
+        </div>
+    </div>
+</body>
+</html>
