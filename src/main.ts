@@ -10,13 +10,24 @@ canvas.height = canvas.clientHeight;
 
 ctx.imageSmoothingEnabled = false;
 
+const previewTailCanvas = document.getElementById("previewTail-canvas") as HTMLCanvasElement;
+const previewTailCtx = previewTailCanvas.getContext("2d")!;
+
+previewTailCanvas.width = previewTailCanvas.clientWidth;
+previewTailCanvas.height = previewTailCanvas.clientHeight;
+
+previewTailCtx.imageSmoothingEnabled = false;
+
+const texture = [0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1];
+
 const cardAmount = 4;
 const deckSize = 10;
-const cardLength = 80;
-const gameSteps = 2000;
-const cardPreviewSteps = 240;
+const cardLength = texture.length * 6;
+const gameSteps = 5000;
+const cardPreviewSteps = cardLength * 5;
+const boardSize = cardLength * 20;
 
-let board = Array.from({length: cardAmount * cardLength}, () => Math.round(Math.random()));
+let board = Array.from({length: boardSize}, (v, k) => texture[k % texture.length]);
 
 interface Card {
   state: CellValue[],
@@ -48,7 +59,7 @@ const deck = Array.from({length: deckSize}, () => {
             }
 
             for (let x = 0; x < state.length; x++) {
-              board[i * cardLength + x] = state[x];
+              board[(i * 5 + 2) * cardLength + x] = state[x];
             }
 
             renderBoard();
@@ -57,8 +68,8 @@ const deck = Array.from({length: deckSize}, () => {
       }
     });
 
-  ctx.canvas.width = ctx.canvas.clientWidth;
-  ctx.canvas.height = ctx.canvas.clientHeight;
+  ctx!.canvas.width = ctx!.canvas.clientWidth;
+  ctx!.canvas.height = ctx!.canvas.clientHeight;
 
 
   return {
@@ -69,13 +80,24 @@ const deck = Array.from({length: deckSize}, () => {
 
 function renderBoard() {
   renderSteps(ctx, simulateSteps(board, gameSteps));
+  previewTailCtx.drawImage(canvas,
+    0, gameSteps - previewTailCanvas.height, previewTailCanvas.width, previewTailCanvas.height,
+    0, 0, previewTailCanvas.width, previewTailCanvas.height);
 }
 
 function render() {
   renderBoard();
 
-  for (let i = 0; i < deckSize; i++) {
-    renderSteps(deck[i].ctx, simulateSteps(deck[i].state, cardPreviewSteps));
+  for (const card of deck) {
+    const previewSpace = Array.from({length: cardLength * 5}, (v, k) => texture[k % texture.length]);
+    for (let x = 0; x < card.state.length; x++) {
+      previewSpace[cardLength * 2 + x] = card.state[x];
+    }
+    renderSteps(
+      card.ctx,
+      simulateSteps(
+        previewSpace,
+        cardPreviewSteps));
   }
 }
 

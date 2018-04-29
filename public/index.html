@@ -17,6 +17,10 @@
   });
 </script>
 <style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
     #container {
         position: relative;
     }
@@ -31,11 +35,11 @@
         right: 0px;
     }
     #canvas {
-        width: 300px;
-        height: 3000px;
+        width: 1800px;
+        height: 5000px;
     }
     #deck {
-        width: 1000px;
+        width: 1300px;
     }
     #board, #canvas, #deck, #deck > canvas {
         display: inline-block;
@@ -51,8 +55,20 @@
         display: block;
     }
     .card > canvas {
-        width: 85px;
-        height: 250px;
+        width: 400px;
+        height: 400px;
+    }
+    #previewTail {
+        position: fixed;
+        left: 0px;
+        bottom: 0px;
+        z-index: 5;
+        display: none;
+    }
+    #previewTail-canvas {
+        border: 1px solid red;
+        width: 1800px;
+        height: 400px;
     }
 </style>
 
@@ -63,6 +79,9 @@
             <canvas id="canvas"></canvas>
         </div>
         <div id="deck">
+        </div>
+        <div id="previewTail">
+            <canvas id="previewTail-canvas"></canvas>
         </div>
     </div>
 </body>

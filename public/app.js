@@ -110,14 +110,19 @@ System.register("main", ["utils/misc", "physics", "graphics"], function (exports
     var __moduleName = context_4 && context_4.id;
     function renderBoard() {
         graphics_1.renderSteps(ctx, physics_1.simulateSteps(board, gameSteps));
+        previewTailCtx.drawImage(canvas, 0, gameSteps - previewTailCanvas.height, previewTailCanvas.width, previewTailCanvas.height, 0, 0, previewTailCanvas.width, previewTailCanvas.height);
     }
     function render() {
         renderBoard();
-        for (let i = 0; i < deckSize; i++) {
-            graphics_1.renderSteps(deck[i].ctx, physics_1.simulateSteps(deck[i].state, cardPreviewSteps));
+        for (const card of deck) {
+            const previewSpace = Array.from({ length: cardLength * 5 }, (v, k) => texture[k % texture.length]);
+            for (let x = 0; x < card.state.length; x++) {
+                previewSpace[cardLength * 2 + x] = card.state[x];
+            }
+            graphics_1.renderSteps(card.ctx, physics_1.simulateSteps(previewSpace, cardPreviewSteps));
         }
     }
-    var misc_2, physics_1, graphics_1, canvas, ctx, cardAmount, deckSize, cardLength, gameSteps, cardPreviewSteps, board, deckContainer, deck;
+    var misc_2, physics_1, graphics_1, canvas, ctx, previewTailCanvas, previewTailCtx, texture, cardAmount, deckSize, cardLength, gameSteps, cardPreviewSteps, boardSize, board, deckContainer, deck;
     return {
         setters: [
             function (misc_2_1) {
@@ -136,12 +141,19 @@ System.register("main", ["utils/misc", "physics", "graphics"], function (exports
             canvas.width = canvas.clientWidth;
             canvas.height = canvas.clientHeight;
             ctx.imageSmoothingEnabled = false;
+            previewTailCanvas = document.getElementById("previewTail-canvas");
+            previewTailCtx = previewTailCanvas.getContext("2d");
+            previewTailCanvas.width = previewTailCanvas.clientWidth;
+            previewTailCanvas.height = previewTailCanvas.clientHeight;
+            previewTailCtx.imageSmoothingEnabled = false;
+            texture = [0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1];
             cardAmount = 4;
             deckSize = 10;
-            cardLength = 80;
-            gameSteps = 2000;
-            cardPreviewSteps = 240;
-            board = Array.from({ length: cardAmount * cardLength }, () => Math.round(Math.random()));
+            cardLength = texture.length * 6;
+            gameSteps = 5000;
+            cardPreviewSteps = cardLength * 5;
+            boardSize = cardLength * 20;
+            board = Array.from({ length: boardSize }, (v, k) => texture[k % texture.length]);
             deckContainer = document.getElementById("deck");
             deck = Array.from({ length: deckSize }, () => {
                 let state = Array.from({ length: cardLength }, () => Math.round(Math.random()));
@@ -162,7 +174,7 @@ System.register("main", ["utils/misc", "physics", "graphics"], function (exports
                                     return;
                                 }
                                 for (let x = 0; x < state.length; x++) {
-                                    board[i * cardLength + x] = state[x];
+                                    board[(i * 5 + 2) * cardLength + x] = state[x];
                                 }
                                 renderBoard();
                             });
